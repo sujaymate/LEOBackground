@@ -5,6 +5,7 @@ import pandas as pd
 from astropy.constants import R_earth, m_p, m_n, c
 from scipy.optimize import fsolve
 from scipy.interpolate import interp1d
+from pathlib import Path
 
 
 class LEOBackgroundGenerator:
@@ -98,6 +99,9 @@ class LEOBackgroundGenerator:
                             (EarthRadius + AtmosphereHeight)
                             / (EarthRadius+self.Alt)))
 
+        # absolute path of the class file
+        self.path = Path(__file__).parent.resolve().as_posix()
+
     def log_interp1d(self, xx, yy, fill='extrapolate', kind='linear'):
         """Functions for an interpolation in log-space
            https://stackoverflow.com/questions/29346292/
@@ -117,7 +121,7 @@ class LEOBackgroundGenerator:
         """ Low energy neutrons spectrum at the top of the atmosphere
         as calculated in Lingenfelter 1963
         """
-        filename = './Data/Neutrons_Lingenfelter.dat'
+        filename = self.path + '/Data/Neutrons_Lingenfelter.dat'
         data = pd.read_table(filename, sep=',')
 
         data["Ener(MeV)"] = data["Ener(MeV)"]
@@ -249,7 +253,7 @@ class LEOBackgroundGenerator:
         for the average Galactic center region (b+-1 deg, l+-2.5deg),
         Return a flux in ph /cm2 /s /keV /sr
         """
-        filename = './Data/LATBackground.dat'
+        filename = self.path + '/Data/LATBackground.dat'
         data = pd.read_table(filename, sep='\s+', header=0, comment='#')
 
         fGC = self.log_interp1d(data['Energy'], data['FluxGCAv'], fill="NaN")
@@ -264,7 +268,7 @@ class LEOBackgroundGenerator:
         Galactic center region (b+-1 deg, l+-2.5deg),
         Return a flux in ph /cm2 /s /keV /sr
         """
-        filename = './Data/LATBackground.dat'
+        filename = self.path + '/Data/LATBackground.dat'
         data = pd.read_table(filename, sep='\s+', header=0, comment='#')
 
         fDisk = self.log_interp1d(data['Energy'], data['FluxDiskAv'], fill="NaN")
@@ -470,7 +474,7 @@ class LEOBackgroundGenerator:
             Return a dataframe to be used by
             PrimaryElectrons and PrimaryPositrons
         """
-        filename = './Data/AguilarElectronPositron.dat'
+        filename = self.path + '/Data/AguilarElectronPositron.dat'
         data = pd.read_table(filename, sep='\s+')
 
         data["Fluxele"] = data["Fluxele"]/10**10
@@ -617,7 +621,7 @@ class LEOBackgroundGenerator:
             Rigidity in GV and Flux in /m2 /sr /s /GV
             Return a flux in ph /cm2 /s /keV /sr
         """
-        filename = './Data/AguilarProton.dat'
+        filename = self.path + '/Data/AguilarProton.dat'
         data = pd.read_table(filename, sep='\s+')
 
         E0 = ((m_p * c**2).to('GeV')).value
@@ -646,7 +650,7 @@ class LEOBackgroundGenerator:
             Rigidity in GV and Flux in /m2 /sr /s /GV
             Return a flux in ph /cm2 /s /keV /sr
         """
-        filename = './Data/AguilarAlphas.dat'
+        filename = self.path + '/Data/AguilarAlphas.dat'
         data = pd.read_table(filename, sep='\s+')
 
         E0 = 2*((m_p * c**2 + m_n * c**2).to('GeV')).value
