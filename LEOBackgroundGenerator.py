@@ -92,7 +92,7 @@ class LEOBackgroundGenerator:
         self.AvGeomagCutOff = (M/4*(1+self.Alt/EarthRadius)**(-2.0)
                                * np.cos(np.deg2rad(self.geomlat))**4)
 
-        AtmosphereHeight = 40  # km
+        AtmosphereHeight = 100  # km
 
         self.HorizonAngle = 90.0 + np.rad2deg(np.arccos(
                             (EarthRadius + AtmosphereHeight)
